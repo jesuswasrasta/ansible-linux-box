@@ -76,7 +76,6 @@
         - jq
         - net-tools
         - p7zip-full
-        - sshd
         - unzip
         - uuid
         - wget
