@@ -24,6 +24,7 @@
     # Ubuntu ------------------------------------------
     # Remove snap
     - name: Remove snapd from Ubuntu
+      become: yes
       apt:
         name: snapd
         state: absent
