@@ -1,0 +1,85 @@
+#########################################################################################
+# Core OS Packages and common stuff (dirs, etc.)
+#########################################################################################
+
+- name: Core OS packages
+  hosts: 127.0.0.1
+  connection: local
+
+  tasks:
+    # Common -------------------------------------------
+    - name: Create ~/bin
+      file:
+        path: ~/bin
+        state: directory
+        mode: 0700
+
+    - name: Add ~/bin to PATH
+      lineinfile:
+        path: ~/.bashrc
+        line: export PATH=$PATH:~/bin
+
+    # TODO: add your personal scripts in ~/bin
+
+    # Ubuntu ------------------------------------------
+    # Remove snap
+    - name: Remove snapd from Ubuntu
+      apt:
+        name: snapd
+        state: absent
+        purge: yes
+
+    - name: Remove snapd-related directories
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+        - /snap
+        - /var/snap
+        - /var/lib/snapd
+        - ~/snap
+
+    - name: Enable HTTPS APT support
+      become: yes
+      apt:
+        name: "{{ packages }}"
+      vars:
+        packages:
+          - apt-transport-https
+          - ca-certificates
+          - software-properties-common
+
+    - name: Update APT package list
+      become: yes
+      apt:
+        update_cache: yes
+      register: apt_update
+      retries: 5
+      until: apt_update is success
+
+    - name: Upgrade to latest APT packages
+      become: yes
+      apt:
+        upgrade: yes
+
+    - name: Install core packages
+      become: yes
+      apt:
+        package: "{{ item }}"
+      loop:
+        - curl
+        - exfat-fuse
+        - exfat-utils
+        - htop
+        - inetutils-traceroute
+        - jq
+        - net-tools
+        - p7zip-full
+        - sshd
+        - unzip
+        - uuid
+        - wget
+
+    #
+    - name: Get installed package list
+      package_facts: {}
