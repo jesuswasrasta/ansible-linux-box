@@ -1,0 +1,51 @@
+- name: VS Code (customization)
+  hosts: 127.0.0.1
+  connection: local
+
+  tasks:
+    # Common
+    - name: Ensure ~/.config folder exists
+      file:
+        path: ~/.config
+        state: directory
+        mode: 0700
+
+    # Linux
+    - name: Install VS Live Share dependencies (Linux)
+      become: yes
+      apt:
+        name: "{{ item }}"
+      loop:
+        - openssl
+        - gnome-keyring
+        - libsecret-1-0
+        - desktop-file-utils
+        - x11-utils
+
+
+    # Common
+    #TODO: set your customizations
+#    - name: Install VS Code extensions
+#      command: ./invoke-code --install-extension {{ item }}
+#      args:
+#        creates: ~/.vscode/extensions/{{ item }}-*/package.json
+#      loop:
+#        - eamodio.toggle-excluded-files                   # Toggle Excluded Files
+#        - editorconfig.editorconfig                       # EditorConfig for VS Code
+#        - ms-vsliveshare.vsliveshare-pack                 # Live Share Extension Pack
+#        - ms-vscode-remote.vscode-remote-extensionpack    # Remote Development
+#        - pkief.material-icon-theme                       # Material Icon Theme
+#        - pflannery.vscode-versionlens                    # Version Lens
+#        - streetsidesoftware.code-spell-checker           # Code Spell Checker
+#        - thenikso.github-plus-theme                      # GitHub Plus Theme
+#        - visualstudioexptteam.vscodeintellicode          # Visual Studio IntelliCode
+#
+#    - name: Override default VS Code preferences
+#      copy:
+#        src: settings.json
+#        dest: ~/.config/Code/User/settings.json
+#
+#    - name: Override default VS Code key bindings
+#      copy:
+#        src: keybindings.json
+#        dest: ~/.config/Code/User/keybindings.json
